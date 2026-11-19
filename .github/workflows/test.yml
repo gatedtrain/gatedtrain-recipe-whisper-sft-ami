@@ -1,0 +1,29 @@
+# Run the recipe's CPU tests on every push and pull request: the adapter's tests on fixture runs and gatedtrain's
+# conformance check. No GPU, models or recorded runs are needed; the tests that read them skip.
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e .
+      - run: python -m unittest discover -s tests -t tests
