@@ -1,0 +1,8 @@
+# The source distribution holds the adapter package, its metadata and the legal files. The tests, the runtime
+# (training and evaluation environment, data and item manifests) and the published results stay in the repository.
+include LICENSE NOTICE THIRD_PARTY_NOTICES.md README.md pyproject.toml
+prune tests
+prune runtime
+prune results
+exclude RESULT.md
+global-exclude __pycache__ *.py[cod] .DS_Store

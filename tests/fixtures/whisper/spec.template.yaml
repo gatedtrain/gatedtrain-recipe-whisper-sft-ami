@@ -1,0 +1,29 @@
+# Area "audio" fixture spec: Whisper base.en full-parameter SFT gated against the base (verifier-owned; prototype,
+# unpromotable). tests/README.md section 11.21. Rendered by tests/_whisper.py: {base} is the plain whisper-base.en
+# directory (the baseline arm evaluates it), {data} the training data directory (one shard train.jsonl, audio/,
+# data_meta.json), {items} the registered item set, {registration_sha256} the SHA-256 of the rendered registration.yaml.
+workflow: ext-whisper-fixture
+version: 1
+budget: {gpu_hours: 24}
+artifacts:
+  base:         {type: model_checkpoint, uri: "file:{base}"}
+  data:         {type: training_dataset, uri: "file:{data}"}
+  items:        {type: item_set, uri: "file:{items}", disjoint_from: [data]}
+  trainer_cfg:  {type: trainer_config, uri: "file:trainer.yaml"}
+  registration: {type: registration, uri: "file:registration.yaml@sha256:{registration_sha256}"}
+stages:
+  - id: sft
+    uses: sft.hf_seq2seq@0.1
+    algorithm: sft
+    model_family: asr.whisper@0.1
+    inputs: {model: base, data: data, config: trainer_cfg}
+    outputs: {model: sft_ckpt}
+  - id: quality_gate
+    uses: gate.superiority@1.0
+    evaluator: asr.whisper_items@0.1
+    sampler: deployment
+    inputs: {model: sft_ckpt, baseline: base, items: items, registration: registration}
+    test: {metric: wer, alpha: 0.025, power: 0.80, mde: 0.05, cluster_by: item, seeds: 1}
+    on_fail: stop
+    owner: skeleton-demo
+    escalation: [skeleton-demo-lead]

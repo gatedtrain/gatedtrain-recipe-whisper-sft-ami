@@ -1,0 +1,56 @@
+{
+  "datasets": {
+    "ami-ihm": {
+      "bytes": 2485979700,
+      "config": "ihm",
+      "files": {
+        "README.md": {
+          "bytes": 7442,
+          "sha256": "sha256:49d294a41584f776f200844f3bfdaf7ac11bf8bcf9547fc975ff8ced44bf6c60"
+        },
+        "ihm/test-00000-of-00004.parquet": {
+          "bytes": 241989739,
+          "sha256": "sha256:d95920dccc6924c15215239461bf5d1152fe07c9c61add073bd12da26dd602e0"
+        },
+        "ihm/test-00001-of-00004.parquet": {
+          "bytes": 292473974,
+          "sha256": "sha256:07a2b1c407cf36bc1e66c1362b0248ed32c897edc2a116549d1dc6b456dc2325"
+        },
+        "ihm/test-00002-of-00004.parquet": {
+          "bytes": 426034962,
+          "sha256": "sha256:83cde21e55fc884295585327b0ee334cba47ad53bdb787dd5f97437067aca5f8"
+        },
+        "ihm/test-00003-of-00004.parquet": {
+          "bytes": 332016187,
+          "sha256": "sha256:3312bb79400ddef62d5a0097e124dfabe86a693b4643e7fef7d72a62588280d7"
+        },
+        "ihm/train-00000-of-00042.parquet": {
+          "bytes": 296004645,
+          "sha256": "sha256:782e6f65089b2b1de0be54f279bed4c08c262748ce71591b69bd27ff44811676"
+        },
+        "ihm/train-00010-of-00042.parquet": {
+          "bytes": 260955067,
+          "sha256": "sha256:8fe00d60c86fce1382e60fea0a791d7527a4f52f2e37448d995238a583045639"
+        },
+        "ihm/train-00026-of-00042.parquet": {
+          "bytes": 351445405,
+          "sha256": "sha256:2e3d33307b110b161ceb2a0b562e5a4b79014d47961a496fa5c0accaf967f4a8"
+        },
+        "ihm/train-00034-of-00042.parquet": {
+          "bytes": 285052279,
+          "sha256": "sha256:023f04cf5c45b4f1351e412990fd977710e6049fa001086b882ac080aace6339"
+        }
+      },
+      "license": "cc-by-4.0",
+      "repo": "edinburghcstr/ami",
+      "repo_type": "dataset",
+      "revision": "46f28f2503e2ec48f8867a84eef356c70476beab"
+    }
+  },
+  "schema": "ptc_mm.whisper_data_source",
+  "schema_version": "1.0",
+  "tags": [
+    "prototype",
+    "unpromotable"
+  ]
+}

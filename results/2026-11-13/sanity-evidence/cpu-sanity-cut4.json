@@ -1,0 +1,34 @@
+{
+  "decoder_code_sha256": "sha256:478dd30eae25241a8e63b4437a89f1f8a064a1fccb77990cdef1a4fc6088cc5f",
+  "deployable": [
+    "model.safetensors",
+    "config.json",
+    "generation_config.json",
+    "processor_config.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "decoding.json"
+  ],
+  "examples_consumed": 16,
+  "files": {
+    "base_ref.json": "sha256:52a6418df14afb4b6bf97e0f155e0257bc1b6e45decfcf5554f89f36b2115f64",
+    "config.json": "sha256:cb3922455c50385968ec2d46a948ad1708a26e7deec502dcf990e31e67aaecdb",
+    "decoding.json": "sha256:2ad4e943dfccb9aaa6b2a221e2944bcfc27a9a5fe1ac1cda3e4627d7b35ad959",
+    "generation_config.json": "sha256:6426dca0fef13ab636e89687c55c4708b51c1ecefc1d904d3152f8ee497d2904",
+    "model.safetensors": "sha256:f37b8ce042d007c56e24a59128489518d20a3c6e35ed68f082fff88bfd49a715",
+    "processor_config.json": "sha256:8c648fa85aafc59a07435ed751322499bd4238b819ca9200ddd2b5ba4df50e68",
+    "tokenizer.json": "sha256:287537d5be89a39bd18e7e3875ad9900faa668493fb759392b8f52a492eca5db",
+    "tokenizer_config.json": "sha256:199baa3112f936dd4e1c0ac5248dcd3e2273b2907e001f4ba48d040a7cf8d9c4",
+    "trainer_state.json": "sha256:04de48749aa3ebfb39b4fa30b3f87a11f1bc7b6860560fce75b18a73c5c5c997"
+  },
+  "global_step": 4,
+  "profile": "cpu-sanity",
+  "schema": "ptc_mm.whisper_sft_cut",
+  "schema_version": "1.0",
+  "script_sha256": "sha256:6fe34118bd59134a1e75a38832e908ff8a75e1672ad7d1ef748d4a73912e22a0",
+  "seed": 4000,
+  "tags": [
+    "prototype",
+    "unpromotable"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "base_only": false,
+  "checkpoint": "<scratch>/pilot-train/checkpoint-60",
+  "corpus_wer": 0.11149782473586078,
+  "degeneracy_mm38": {
+    "mean_ge_0_05": true,
+    "mode_share_lt_0_5": true,
+    "sd_gt_0": true
+  },
+  "device": "cpu",
+  "dtype": "torch.float32",
+  "empty_transcripts": 0,
+  "errors": 0,
+  "global_step": 60,
+  "items": 500,
+  "max_rss_mb": 1864.9,
+  "missing_hashes": [
+    "model_hash",
+    "item_set_hash"
+  ],
+  "repeats": 1,
+  "sampler_hash": "sha256:2649163a23ba8d35c2454a07547ef3d62cfe36bc8a1c58d6363f79bcf2b6be19",
+  "seconds_per_item": 0.187,
+  "totals": {
+    "deletions": 247,
+    "errors": 897,
+    "insertions": 124,
+    "ref_words": 8045,
+    "substitutions": 526
+  },
+  "truncated_transcripts": 0,
+  "wall_seconds": 93.3,
+  "wer": {
+    "distinct": 100,
+    "max": 0.75,
+    "mean": 0.11964178606618776,
+    "min": 0.0,
+    "mode": 0.0,
+    "mode_share": 0.35,
+    "n": 500,
+    "sd": 0.14548480786474663,
+    "share_ge_1": 0.0,
+    "share_zero": 0.35
+  }
+}

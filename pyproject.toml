@@ -1,0 +1,36 @@
+[project]
+name = "gatedtrain-recipe-whisper-sft-ami"
+version = "0.1.0"
+description = "gatedtrain recipe: Whisper base.en SFT on AMI (transformers Seq2SeqTrainer) and its adapter `hf_seq2seq` (prototype)."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md"]
+authors = [{name = "The gatedtrain Authors"}]
+requires-python = ">=3.12,<3.14"
+keywords = ["post-training", "fine-tuning", "speech-recognition", "whisper", "ami", "evaluation", "gatedtrain"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# The adapter is pure Python; the training and evaluation environment is runtime/ (its own pyproject.toml and uv.lock).
+dependencies = ["gatedtrain>=0.3,<0.4"]
+
+[project.urls]
+Homepage = "https://github.com/gatedtrain/gatedtrain-recipe-whisper-sft-ami"
+Source = "https://github.com/gatedtrain/gatedtrain-recipe-whisper-sft-ami"
+Issues = "https://github.com/gatedtrain/gatedtrain-recipe-whisper-sft-ami/issues"
+
+[project.entry-points."gatedtrain.adapters"]
+hf_seq2seq = "gatedtrain_recipe_whisper_sft_ami.rows:PLUGIN"
+
+[build-system]
+requires = ["setuptools>=78"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

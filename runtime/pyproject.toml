@@ -1,0 +1,30 @@
+# Multimodal prototype, area "audio" (row 5 of the multimodal prototype scope, run order slot 4): supervised fine-tuning of
+# OpenAI Whisper with the Hugging Face transformers Seq2SeqTrainer on one RTX 4090 (prototype, unpromotable).
+# Runtime kind `venv_in_container` (MULTIMODAL-SPEC MM-32): this lock builds a host venv that is mounted read-only
+# into a pinned CUDA base image (the area-1 image). See README.md.
+#
+# Version rule (as areas 1-3): latest stable release at least two weeks old on 2026-11-12 (cut-off 2026-10-29),
+# compatible. torch 2.15.0 (PyPI build, CUDA 13.2 runtime wheels), transformers 5.21.0, accelerate 1.15.0 and
+# safetensors 0.8.0 are the area-3 pins; pyarrow reads the AMI parquet shards (host data step only); soundfile
+# decodes FLAC/WAV (libsndfile wheel); numpy 2.5.4 as area 3.
+[project]
+name = "gatedtrain-recipe-whisper-sft-ami-runtime"
+version = "0.1.0"
+license = "Apache-2.0"
+requires-python = "==3.12.*"
+dependencies = [
+    "torch==2.15.0",
+    "transformers==5.21.0",
+    "accelerate==1.15.0",
+    "safetensors==0.8.0",
+    "numpy==2.5.4",
+    "pyarrow==26.0.0",
+    "soundfile==0.14.0",
+]
+
+[tool.uv]
+package = false
+# Linux x86_64 only.
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+# Every transitive dependency resolves to a release at least two weeks old.
+exclude-newer = "2026-10-29T00:00:00Z"

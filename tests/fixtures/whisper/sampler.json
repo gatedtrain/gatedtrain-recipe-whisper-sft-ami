@@ -1,0 +1,16 @@
+{
+  "batch_size": 16,
+  "do_sample": false,
+  "dtype": "fp32",
+  "input": "WhisperFeatureExtractor log-mel, 80 bins x 3000 frames, from the checkpoint's processor",
+  "language": "en",
+  "long_form": false,
+  "max_new_tokens": 200,
+  "max_text_tokens_rule": "16 + ceil(12 * len(audio) / 16000)",
+  "num_beams": 1,
+  "order": "items.jsonl order, fixed batches",
+  "return_timestamps": false,
+  "sample_rate": 16000,
+  "strategy": "greedy",
+  "temperature_fallback": null
+}

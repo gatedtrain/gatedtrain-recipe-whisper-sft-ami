@@ -1,0 +1,4 @@
+# Area "audio" trainer config for ext-collect (EXT-2): the adapter and the launch profile.
+# prototype, unpromotable.
+backend: hf_seq2seq
+profile: full

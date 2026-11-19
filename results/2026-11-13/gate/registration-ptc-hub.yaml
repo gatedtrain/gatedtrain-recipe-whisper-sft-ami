@@ -1,0 +1,102 @@
+# Amendment for the rename to ptc-hub 0.2.0 (05 section 3.7, R17-1/R17-3).
+# Not a version-only amendment: besides analysis_code_version it changes the evaluator, because eval_asr.py (the
+# scorer) was re-pinned for the rename with its internal wording reworded too (docstring only; scoring unchanged):
+# code_sha256 sha256:6703cd48... -> sha256:12648074..., so evaluators[0].manifest_hash sha256:d18c705e... ->
+# sha256:015cfae5.... The amendment is written after the gate's result was observed, so post_hoc: true (a PASS is
+# reported INCONCLUSIVE with reason post_hoc). The gate's own verdict is reproduced with the prior registration and
+# ptc 78eb913 (RESULT.md). `amends` names registration.yaml in this directory, the published copy of the gate-time
+# registration sha256:e7781f31...: it differs from the gate-time file only in redacted comments and in the reworded
+# free text of sigma_pilot.source (README.md "Results").
+# Area "audio" pre-registration: Whisper base.en full-parameter SFT on AMI IHM against the base (05 section 3.7;
+# MULTIMODAL-SPEC section 6 row 5 and its deviations). prototype, unpromotable. Unsigned: no named team has signed it.
+#
+# DRAFT (ptc-hub side, 2026-11-13). Every value is fixed before the smoke run (the maintainers' area 4
+# decisions: sigma_plan fixed 0.12 from the CPU pilot); the operator copies this file to
+# <data-root>/ptc-mm/area4-whisper/gate/registration.yaml, adds `created_at` (the time it is written, RFC
+# 3339 UTC, before the full run's first START in gpu-guard.log) and pins its SHA-256 in spec.yaml. Values: deciding T3
+# metric `wer` (per-utterance word error rate after the Whisper English normalizer; lower is better; [0, null]),
+# blocking; superiority with margin 0; alpha 0.025 one-sided, power 0.8, a single clause (m = 1); N 500, K 1, eval seed
+# 11 (greedy decoding draws nothing; the seed is recorded). Plan: n_required = ceil(((1.95996 + 0.84162) x 0.12 /
+# 0.02)^2) = 283 <= 500 (MDE at N 500: 0.0150). Corpus WER is reported descriptively only (summary.json), never decides.
+# Any later change is an amendment: a new registration with `amends` and a new hash in spec.yaml (05:166).
+registration_version: 1
+created_at: "2026-11-17T17:56:10Z"
+amends: "sha256:fc0f47b2b59509eae5230a031e10ad3baa8ae791cd7bf25b490726f762041b81"
+registration_id: mm-a4-whisper-wer-superiority-v1
+signed_by: prototype-unsigned
+workflow: mm-a4-whisper-sft
+gate: quality_gate
+clause:
+  type: superiority
+  metric: wer
+  direction: lower_is_better
+  margin: 0.0                 # delta_sup = 0 (05 section 3.1)
+  alpha: 0.025                # one-sided
+  power: 0.8
+  planning_effect: 0.02       # WER points; the CPU pilot moved the mean by 0.033 after 960 examples
+  sigma_plan: fixed
+  unit: item
+  samples_per_item: 1
+  eval_seeds: [11]            # eval_asr.py --eval-seeds 11 (K = 1: greedy decoding is deterministic)
+  interval: cluster_bootstrap
+  blocking: true
+margin_justification: >-
+  Superiority with delta_sup = 0: any held-out reduction of the mean per-utterance WER counts. Prototype value, not
+  reviewed by a named team.
+sigma_pilot:
+  sigma: 0.12
+  source: >-
+    CPU power pilot (area4-whisper README "Items and power"; sanity-evidence/cpu-pilot/paired.json): cut 60 of
+    train_whisper.py --profile cpu-pilot (60 steps x 16 examples) against the base on all 500 registered items, greedy,
+    fp32; SD of the 500 paired differences 0.1187, rounded up to 0.12 (the maintainers' area 4 decisions).
+    The full run's cut lies further from the base, so sigma may grow; at N 500 the plan keeps margin (283 needed).
+baseline_pilot_mean: 0.153    # the CPU pilot's base mean per-utterance WER on all 500 items (mode share 0.30, sd 0.168)
+shared_annotation: >-
+  The references of wer are held-out AMI IHM test transcripts (meetings EN2002, ES2004, IS1009, TS3003; 16 speakers)
+  made by the same AMI manual verbatim transcription process as the training labels (AMI train split, 29 other
+  speakers); no training stage consumed them, so the programmatic scorer stays T3 (05 section 6.1, R16-1). Part of a
+  gain may be learning that convention: AMI keeps repetitions, false starts and partial words that Whisper's clean
+  transcripts drop, and the Whisper English normalizer removes fillers but not repetitions (the CPU pilot's gain was
+  mostly fewer deletions, 711 to 247). A pass shows that the model transcribes AMI-style meeting speech of unseen
+  speakers closer to the AMI references, not a general accuracy gain. Whisper's training data is undisclosed and may
+  include AMI; that affects both arms equally and is not checkable.
+eval_distribution:
+  item_set_hash: "sha256:38b26785063a54688cb650cc97bbe1bedbb02caa9f0975e82fddd36ec25a5fc7"   # manifest of area4-whisper/items/
+# The evaluation sampler: eval_asr.py `sampler` = the deployment decoder (every cut's decoding.json) plus batch size
+# 16, dtype fp32 and the item order (EXT-145); RFC 8785 hash sha256:2649163a23ba8d35c2454a07547ef3d62cfe36bc8a1c58d6363f79bcf2b6be19
+# (equal to the evaluator's compact-JSON hash: integers and strings only).
+sampler:
+  batch_size: 16
+  do_sample: false
+  dtype: fp32
+  input: WhisperFeatureExtractor log-mel, 80 bins x 3000 frames, from the checkpoint's processor
+  language: en
+  long_form: false
+  max_new_tokens: 200
+  max_text_tokens_rule: 16 + ceil(12 * len(audio) / 16000)
+  num_beams: 1
+  order: items.jsonl order, fixed batches
+  return_timestamps: false
+  sample_rate: 16000
+  strategy: greedy
+  temperature_fallback: null
+evaluators:
+  - id: asr.whisper_items@0.1
+    # EXT-6: SHA-256 of the canonical JSON {evaluator, metric, direction, scorer}; scorer per_utterance_wer at
+    # eval_asr@0.1 (transformers 5.21.0, normalizer.json sha256:bf1c507d...), code_sha256 = SHA-256 of
+    # runtime/eval_asr.py (sha256:12648074..., re-pinned for ptc-hub 0.2.0; the gate ran with sha256:6703cd48...,
+    # manifest_hash sha256:d18c705e...). Changing eval_asr.py changes the registry row and this hash.
+    manifest_hash: "sha256:015cfae5001d6961dcd498d50bca6a2c03b4981ba8409c785132bfd3d041f329"
+multiplicity:
+  plan: single_gate
+  family: null
+analysis_code_version: ptc-hub 0.2.0
+bootstrap:
+  replicates: 10000
+  seed: 20261113
+pairing:
+  max_unpaired: 0             # every item must be in both arms
+min_paired: 10
+contamination:
+  allow_exact_overlap: false  # MM-11, EXT-144: item `text` against the training rows' `text` (0 by construction)
+post_hoc: true

@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.DS_Store
+runtime/.venv/
+runtime/data-source/ami-ihm/
+runtime/data/audio/
+runtime/data/train.jsonl
+runtime/items/audio/
+runtime/models/whisper-base.en/
+runtime/hf-home/
+runtime/hf-meta/

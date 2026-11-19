@@ -1,0 +1,11 @@
+{
+  "base_mean": 0.15303606779049736,
+  "better": 191,
+  "cut_mean": 0.11964178606618776,
+  "mean": 0.033394281724309596,
+  "n": 500,
+  "note": "oriented paired differences base WER - cut-60 WER (positive = cut better), CPU pilot, 500 items",
+  "sd": 0.1186926456798915,
+  "tied": 234,
+  "worse": 75
+}

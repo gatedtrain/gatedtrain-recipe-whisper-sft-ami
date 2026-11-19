@@ -1,0 +1,50 @@
+{
+  "adapter": "hf_seq2seq",
+  "checkpoint": {
+    "base_model_hash": null,
+    "model_hash": null
+  },
+  "created_at": "2026-11-13T17:38:42Z",
+  "direction": "lower_is_better",
+  "env_version_sha256": null,
+  "eval_seeds": [
+    11
+  ],
+  "evaluator_id": "asr.whisper_items@0.1",
+  "framework": {
+    "name": "transformers",
+    "version": "5.21.0"
+  },
+  "item_set_hash": null,
+  "metric": "wer",
+  "normalizer_sha256": null,
+  "sampler": {
+    "batch_size": 16,
+    "do_sample": false,
+    "dtype": "fp32",
+    "input": "WhisperFeatureExtractor log-mel, 80 bins x 3000 frames, from the checkpoint's processor",
+    "language": "en",
+    "long_form": false,
+    "max_new_tokens": 200,
+    "max_text_tokens_rule": "16 + ceil(12 * len(audio) / 16000)",
+    "num_beams": 1,
+    "order": "items.jsonl order, fixed batches",
+    "return_timestamps": false,
+    "sample_rate": 16000,
+    "strategy": "greedy",
+    "temperature_fallback": null
+  },
+  "sampler_hash": "sha256:2649163a23ba8d35c2454a07547ef3d62cfe36bc8a1c58d6363f79bcf2b6be19",
+  "schema": "ptc_skel.item_eval",
+  "schema_version": "1.0",
+  "score_range": [
+    0,
+    null
+  ],
+  "scorer": {
+    "code_sha256": "sha256:6703cd48bbc4420fcbfba0dff7bbf97051c98cf861700219aff0c8a16e5f0467",
+    "name": "per_utterance_wer",
+    "version": "eval_asr@0.1 transformers 5.21.0 EnglishTextNormalizer normalizer.json sha256:bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd; word-level Levenshtein",
+    "weights_sha256": null
+  }
+}

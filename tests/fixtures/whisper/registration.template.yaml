@@ -1,0 +1,55 @@
+# Area "audio" fixture registration (verifier-owned; prototype, unpromotable). tests/README.md section 11.21.
+# Rendered by tests/_whisper.py: {item_set_hash} is the manifest hash of the fixture item set, {sampler} the
+# evaluation sampler of eval_asr.py (sampler.json: the deployment decoder plus batch size, dtype and order, as JSON
+# flow), {evaluator_hash} the identity hash of asr.whisper_items@0.1 (EXT-6).
+# The shape of the area's registration (the maintainers' area 4 decisions): deciding T3 metric `wer`
+# (per-utterance, lower is better, [0, null]), superiority with margin 0, K 1, eval seed 11, alpha 0.025 one-sided,
+# power 0.8, sigma_plan fixed 0.12. Fixture planning effect 0.05 (the area's is 0.02 at N 500):
+# n_required = ceil(((1.95996 + 0.84162) x 0.12 / 0.05)^2) = 46 <= the scenario's 60 items.
+# R16-1: the references share the training labels' annotation process, so `shared_annotation` states it.
+registration_version: 1
+registration_id: ext-whisper-fixture-superiority-v1
+signed_by: prototype-unsigned
+workflow: ext-whisper-fixture
+gate: quality_gate
+clause:
+  type: superiority
+  metric: wer
+  direction: lower_is_better
+  margin: 0.0
+  alpha: 0.025
+  power: 0.8
+  planning_effect: 0.05
+  sigma_plan: fixed
+  unit: item
+  samples_per_item: 1
+  eval_seeds: [11]
+  interval: cluster_bootstrap
+  blocking: true
+margin_justification: Fixture value (superiority, delta_sup = 0).
+sigma_pilot:
+  sigma: 0.12
+  source: Fixture value; the area's sigma is the CPU pilot's SD of paired differences (0.119).
+baseline_pilot_mean: 0.153
+shared_annotation: >-
+  The references of wer are held-out AMI IHM test transcripts made by the same AMI manual verbatim transcription
+  process as the training labels; no training stage consumed them, so the scorer stays T3 (05 section 6.1, R16-1).
+  Part of a gain may be learning that convention.
+eval_distribution:
+  item_set_hash: "{item_set_hash}"
+sampler: {sampler}
+evaluators:
+  - id: asr.whisper_items@0.1
+    manifest_hash: "{evaluator_hash}"
+multiplicity:
+  plan: single_gate
+  family: null
+analysis_code_version: gatedtrain 0.3.0
+bootstrap:
+  replicates: 10000
+  seed: 20261113
+pairing:
+  max_unpaired: 0
+min_paired: 10
+contamination:
+  allow_exact_overlap: false

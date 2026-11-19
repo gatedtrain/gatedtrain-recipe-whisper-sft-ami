@@ -1,0 +1,122 @@
+{
+  "audio_seconds": 12315.0,
+  "normalizer": {
+    "name": "transformers EnglishTextNormalizer (Whisper's English normalizer)",
+    "normalizer_json": "models/whisper-base.en/normalizer.json",
+    "normalizer_json_sha256": "sha256:bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd",
+    "transformers": "5.21.0"
+  },
+  "schema": "ptc_mm.whisper_train_data",
+  "schema_version": "1.0",
+  "source": {
+    "audio": "exact WAV bytes of the parquet `audio.bytes` cell (16 kHz mono float32, Kaldi s5 segments)",
+    "config": "ihm",
+    "files": {
+      "ihm/test-00000-of-00004.parquet": "sha256:d95920dccc6924c15215239461bf5d1152fe07c9c61add073bd12da26dd602e0",
+      "ihm/test-00001-of-00004.parquet": "sha256:07a2b1c407cf36bc1e66c1362b0248ed32c897edc2a116549d1dc6b456dc2325",
+      "ihm/test-00002-of-00004.parquet": "sha256:83cde21e55fc884295585327b0ee334cba47ad53bdb787dd5f97437067aca5f8",
+      "ihm/test-00003-of-00004.parquet": "sha256:3312bb79400ddef62d5a0097e124dfabe86a693b4643e7fef7d72a62588280d7",
+      "ihm/train-00000-of-00042.parquet": "sha256:782e6f65089b2b1de0be54f279bed4c08c262748ce71591b69bd27ff44811676",
+      "ihm/train-00010-of-00042.parquet": "sha256:8fe00d60c86fce1382e60fea0a791d7527a4f52f2e37448d995238a583045639",
+      "ihm/train-00026-of-00042.parquet": "sha256:2e3d33307b110b161ceb2a0b562e5a4b79014d47961a496fa5c0accaf967f4a8",
+      "ihm/train-00034-of-00042.parquet": "sha256:023f04cf5c45b4f1351e412990fd977710e6049fa001086b882ac080aace6339"
+    },
+    "license": "cc-by-4.0",
+    "repo": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "text": "the dataset's `text` (Kaldi AMI s5 normalization: upper case, no punctuation)"
+  },
+  "split": {
+    "exact_overlap_normalized": 0,
+    "exact_overlap_raw": 0,
+    "generator": "numpy default_rng(SeedSequence([0xa4d10, seed])): first permutation(len(train_pool))[:n_train] picks the training rows, then permutation(len(item_pool))[:n_items] picks the items; both pools sorted by utt_id first",
+    "item_pool": {
+      "dropped_shared_speaker": 0,
+      "dropped_text_overlap": 0,
+      "max_seconds": 30.0,
+      "min_normalized_words": 8,
+      "rows_after_filters": 4393,
+      "split": "test"
+    },
+    "item_series": {
+      "EN2002": 172,
+      "ES2004": 107,
+      "IS1009": 105,
+      "TS3003": 116
+    },
+    "item_speakers": [
+      "FEE013",
+      "FEE016",
+      "FEO070",
+      "FEO072",
+      "FIE088",
+      "FIO084",
+      "FIO087",
+      "FIO089",
+      "MEE014",
+      "MEE071",
+      "MEE073",
+      "MEO015",
+      "MTD0010ID",
+      "MTD009PM",
+      "MTD011UID",
+      "MTD012ME"
+    ],
+    "n_items": 500,
+    "n_train": 3000,
+    "numpy": "2.5.4",
+    "seed": 20261112,
+    "shared_speakers": [],
+    "train_pool": {
+      "max_seconds": 30.0,
+      "min_words": 4,
+      "rows": 5894,
+      "split": "train"
+    },
+    "train_series": {
+      "EN2001": 841,
+      "ES2006": 333,
+      "ES2007": 418,
+      "IS1002": 213,
+      "IS1003": 513,
+      "TS3006": 59,
+      "TS3007": 623
+    },
+    "train_speakers": [
+      "FEE021",
+      "FEE024",
+      "FEE028",
+      "FEO023",
+      "FEO026",
+      "FEO065",
+      "FEO066",
+      "FIO017",
+      "MEE025",
+      "MEE027",
+      "MEE067",
+      "MEE068",
+      "MEO022",
+      "MEO069",
+      "MIE029",
+      "MIE080",
+      "MIE083",
+      "MIO005",
+      "MIO023",
+      "MIO026",
+      "MIO035",
+      "MTD021PM",
+      "MTD022ID",
+      "MTD023UID",
+      "MTD024ME",
+      "MTD025PM",
+      "MTD026UID",
+      "MTD027ID",
+      "MTD028ME"
+    ]
+  },
+  "tags": [
+    "prototype",
+    "unpromotable"
+  ],
+  "train_sha256": "sha256:2278c53437b0cc3daa16f4139844b81c3bee6bb01c5ca7907b57367e7477b372"
+}

@@ -1,0 +1,40 @@
+# Area "audio" workflow: Whisper base.en full-parameter SFT on AMI IHM with the HF Seq2SeqTrainer, gated on the
+# per-utterance WER of 500 held-out AMI test utterances (MULTIMODAL-SPEC sections 5-7, row 5 and its deviations;
+# the maintainers' area 4 decisions). prototype, unpromotable. DRAFT (gatedtrain side, 2026-11-13); the
+# operator writes the real file under <data-root>/ptc-mm/area4-whisper/gate/ (as areas 2 and 3) with
+# registration.yaml and trainer.yaml beside it. The gate directory lies inside the read-only area4-whisper mount but
+# outside every hashed artifact (base, data, items).
+# One training stage outside gatedtrain (train_whisper.py; ext-launch prints the command, gpu-step.sh runs it) and one
+# superiority gate on eval_asr.py arms filled by ext-arm-fill, collected by `gatedtrain ext-collect --adapter hf_seq2seq`.
+# `gatedtrain run` refuses this spec.
+# base is the plain whisper-base.en directory (openai/whisper-base.en @ 911407f4...cd6, 11 files), pinned by its T0-09
+# manifest hash (computed 2026-11-13 with gatedtrain; it is also the baseline arm's model hash). data is the training
+# directory (one shard train.jsonl, 3,000 utterances, plus audio/ and data_meta.json; its manifest hash is the ledger's
+# data_ref.snapshot); items the registered set (500 utterances). All inside the read-only area4-whisper identity mount
+# (EXT-141, EXT-142). Re-pin the registration hash after `created_at` is added and after any amendment.
+workflow: mm-a4-whisper-sft
+version: 1
+budget: {gpu_hours: 24}
+artifacts:
+  base:         {type: model_checkpoint, uri: "file:<data-root>/ptc-mm/area4-whisper/models/whisper-base.en@sha256:583e09fedd5421398d92af8b40bb97631823c277782b1c904c67b1cbd8d4b805"}
+  data:         {type: training_dataset, uri: "file:<data-root>/ptc-mm/area4-whisper/data@sha256:d5080d22d85c45c9628dc7dc2d21ec273b442643f1614fb6fbf9f82c670927f6"}
+  items:        {type: item_set, uri: "file:<data-root>/ptc-mm/area4-whisper/items@sha256:38b26785063a54688cb650cc97bbe1bedbb02caa9f0975e82fddd36ec25a5fc7", disjoint_from: [data]}
+  trainer_cfg:  {type: trainer_config, uri: "file:trainer.yaml@sha256:0288b67825012338e4a51c5c313a31ed6809f3d4813e90b57ee4cb6977c1f42f"}
+  registration: {type: registration, uri: "file:registration-gatedtrain.yaml@sha256:058d2144da78878c8111724ca2b9466006643106fe965c0008fe569df22630bd"}
+stages:
+  - id: sft
+    uses: sft.hf_seq2seq@0.1
+    algorithm: sft
+    model_family: asr.whisper@0.1
+    inputs: {model: base, data: data, config: trainer_cfg}
+    outputs: {model: sft_ckpt}
+  - id: quality_gate
+    uses: gate.superiority@1.0
+    evaluator: asr.whisper_items@0.1
+    sampler: deployment
+    inputs: {model: sft_ckpt, baseline: base, items: items, registration: registration}
+    # mde equals the registration's planning_effect (G-4).
+    test: {metric: wer, alpha: 0.025, power: 0.80, mde: 0.02, cluster_by: item, seeds: 1}
+    on_fail: stop
+    owner: skeleton-demo
+    escalation: [skeleton-demo-lead]
