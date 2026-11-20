@@ -18,6 +18,7 @@ import importlib.metadata
 import importlib.util
 import io
 import json
+import math
 import re
 import shutil
 import struct
@@ -351,6 +352,18 @@ class TestScorer(unittest.TestCase):
         self.assertEqual(ea.score(simple_norm, "a b", "a b c d e")["wer"], 1.5)    # a hallucination exceeds 1
         with self.assertRaisesRegex(ValueError, "normalized reference is empty"):
             ea.score(simple_norm, "...", "a")
+
+    def test_stats(self):
+        # 0.5 and 0.25 both occur twice: the tie goes to the smaller value, whichever comes first
+        for vals in ([0.5, 0.25, None, 0.5, 0.25, 1.0], [0.25, 0.5, 1.0, 0.25, 0.5, None]):
+            s = ea.stats(vals)
+            self.assertEqual((s["n"], s["mode"], s["mode_share"], s["distinct"]), (5, 0.25, 0.4, 3), vals)
+            self.assertEqual((s["min"], s["max"], s["share_zero"], s["share_ge_1"]), (0.25, 1.0, 0.0, 0.2))
+            self.assertAlmostEqual(s["mean"], 0.5, places=12)
+            self.assertAlmostEqual(s["sd"], math.sqrt(0.375 / 4), places=12)              # sample sd, n - 1 = 4
+        self.assertEqual(ea.stats([0.0, 0.0, 2.0])["mode"], 0.0)                            # a plain majority
+        self.assertEqual(ea.stats([None]), {"n": 0})
+        self.assertIsNone(ea.stats([0.3])["sd"])
 
 
 class TestTranscribe(unittest.TestCase):
