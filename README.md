@@ -29,7 +29,7 @@ flowchart LR
 `gatedtrain ext-launch` checks the run request and prints the container command; you run it. The steps, flags and
 arm files are explained in gatedtrain's [External runs](https://gatedtrain.github.io/gatedtrain/external-runs/) guide.
 
-## Result
+## Results
 
 One registered run, 300 training steps:
 
@@ -37,11 +37,10 @@ One registered run, 300 training steps:
 |---|---|
 | Base (Whisper base.en) | 0.153 |
 | Trained (cut 300) | 0.108 |
-| Gate | **PASS** as collected on 2026-11-13: delta 0.0455, 95% cluster-bootstrap interval [0.0348, 0.0557], p <= 9.6e-05 |
+| Gate | **PASS** under the original registration; **INCONCLUSIVE (post_hoc)** under the registration amended for the renames: delta 0.0455, 95% cluster-bootstrap interval [0.0348, 0.0557], p <= 9.6e-05 |
 
-The gate was later re-collected with a registration amended for the framework's renames. The amendment changes the
-evaluator after the result was observed, so gatedtrain reports the same numbers as **INCONCLUSIVE (post_hoc)**, not
-PASS. `RESULT.md` has the full record of both, with the power, overlap with training and the amendments.
+The original gate was collected on 2026-11-13. The amendment for the framework's renames changes the evaluator after
+the result was seen, so gatedtrain reports the same numbers as INCONCLUSIVE, not PASS. `RESULT.md` has the full record of both, with the power, overlap with training and the amendments.
 
 `results/2026-11-13/` holds the gate files and CPU evidence; `RESULT.md` has the gate's verdict and its amendments
 for the framework's renames (the run's outputs are not published in this repository).
