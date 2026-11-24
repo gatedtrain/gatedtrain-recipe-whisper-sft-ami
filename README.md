@@ -1,21 +1,56 @@
 # gatedtrain recipe: Whisper base.en SFT on AMI
 
-A [gatedtrain](https://github.com/gatedtrain/gatedtrain) recipe: full-parameter supervised fine-tuning of OpenAI Whisper base.en with
-the Hugging Face transformers `Seq2SeqTrainer` on AMI Meeting Corpus speech (individual headset microphones), gated
-on the per-utterance word error rate of 500 held-out AMI test utterances against the base model. Prototype.
+This recipe teaches a small speech recognizer to transcribe meeting speech, and lets
+[gatedtrain](https://github.com/gatedtrain/gatedtrain) decide whether the fine-tuned model really is better than the
+one it started from. The Hugging Face transformers `Seq2SeqTrainer` fine-tunes all parameters of OpenAI Whisper base.en
+on AMI Meeting Corpus speech (individual headset microphones). gatedtrain then gates the result against the base model
+on the per-utterance word error rate of 500 held-out AMI test utterances, by a rule registered before training.
 
-Code comments, tests, `RESULT.md` and the gate files under `results/` cite records of the framework's development:
-the maintainers' decision record ("Area 4 decisions"), the framework's review rounds ("review 9 L1", "review 11 L1")
-and ids of its internal issue lists (`G-21`). Those records are not published.
+A recipe is a ready-made external run for gatedtrain: the training code with its locked environment, plus an
+*adapter*, the small plugin through which gatedtrain reads the run's outputs. gatedtrain does not start the training;
+you run it.
 
-## Layout
+This is a prototype: the result below is one registered run, not a benchmark claim.
 
-| Path | What |
+## How it works
+
+```mermaid
+flowchart LR
+    fetch["fetch_models.py and make_data.py:<br/>whisper-base.en and AMI, pinned"] --> train["train_whisper.py in a container<br/>(Seq2SeqTrainer, full fine-tune)"]
+    train --> cuts["Checkpoints and<br/>consumption logs"]
+    cuts --> eval["eval_asr.py: base and trained model<br/>on 500 held-out utterances"]
+    eval --> arms["Arm files: per-utterance word error rate"]
+    arms --> collect["gatedtrain ext-collect"]
+    cuts -->|"read through the adapter hf_seq2seq"| collect
+    collect --> gate{"Gate"}
+    gate --> report["Gate report, consumption ledger"]
+```
+
+`gatedtrain ext-launch` checks the run request and prints the container command; you run it. The steps, flags and
+arm files are explained in gatedtrain's [External runs](https://gatedtrain.github.io/gatedtrain/external-runs/) guide.
+
+## Result
+
+One registered run, 300 training steps:
+
+| | Word error rate, 500 held-out utterances (lower is better) |
 |---|---|
-| `src/gatedtrain_recipe_whisper_sft_ami/` | the gatedtrain adapter `hf_seq2seq` (`adapter.py`) and its registry rows (`rows.py`), registered through the `gatedtrain.adapters` entry point |
-| `runtime/` | what runs in the container: `train_whisper.py`, `eval_asr.py`, the host steps `fetch_models.py` and `make_data.py`, the pin manifests (`models/MODELS.json`, `data-source/DATA.json`), the registered item set (`items/items.jsonl`, `items/item_set_meta.json`; audio not committed), `data/data_meta.json`, and its own `pyproject.toml` and `uv.lock` |
-| `tests/` | the adapter's tests on fixture runs (no model or audio needed) and gatedtrain's conformance check |
-| `results/2026-11-13/` | the gate drafts (`gate/`) and the CPU sanity and power-pilot evidence (`sanity-evidence/`) |
+| Base (Whisper base.en) | 0.153 |
+| Trained (cut 300) | 0.108 |
+| Gate | **PASS** as collected on 2026-11-13: delta 0.0455, 95% cluster-bootstrap interval [0.0348, 0.0557], p <= 9.6e-05 |
+
+The gate was later re-collected with a registration amended for the framework's renames. The amendment changes the
+evaluator after the result was observed, so gatedtrain reports the same numbers as **INCONCLUSIVE (post_hoc)**, not
+PASS. `RESULT.md` has the full record of both, with the power, overlap with training and the amendments.
+
+`results/2026-11-13/` holds the gate files and CPU evidence; `RESULT.md` has the gate's verdict and its amendments
+for the framework's renames (the run's outputs are not published in this repository).
+The files under results/2026-11-13/ are redacted copies (host paths replaced with `<data-root>/...`, internal process
+notes reworded) of `gate/EVAL-PLAN.md`, `gate/registration.yaml` and `gate/spec.yaml`; the gate-time originals are not
+published.
+
+`trainer.yaml` and `sanity-evidence/` are unchanged; `spec.yaml` still pins the original `registration.yaml` hash.
+The runtime scripts were unchanged by this redaction; `RESULT.md` lists their later re-pins.
 
 ## Setup
 
@@ -42,22 +77,24 @@ and needs `GATEDTRAIN_RECIPE_WHISPER_SFT_AMI_RUNTIME` set to the checkout's `run
 metric. Checkpoints are loaded from safetensors only (`from_pretrained` of plain directories; no pickle weights are
 downloaded or written).
 
+## Layout
+
+| Path | What |
+|---|---|
+| `src/gatedtrain_recipe_whisper_sft_ami/` | the gatedtrain adapter `hf_seq2seq` (`adapter.py`) and its registry rows (`rows.py`), registered through the `gatedtrain.adapters` entry point |
+| `runtime/` | what runs in the container: `train_whisper.py`, `eval_asr.py`, the host steps `fetch_models.py` and `make_data.py`, the pin manifests (`models/MODELS.json`, `data-source/DATA.json`), the registered item set (`items/items.jsonl`, `items/item_set_meta.json`; audio not committed), `data/data_meta.json`, and its own `pyproject.toml` and `uv.lock` |
+| `tests/` | the adapter's tests on fixture runs (no model or audio needed) and gatedtrain's conformance check |
+| `results/2026-11-13/` | the gate drafts (`gate/`) and the CPU sanity and power-pilot evidence (`sanity-evidence/`) |
+
 ## Tests
 
 ```bash
 python -m unittest discover -s tests -t tests
 ```
 
-## Results
-
-`results/2026-11-13/` holds the gate files and CPU evidence; `RESULT.md` has the gate's verdict and its amendments
-for the framework's renames (the run's outputs are not published in this repository).
-The files under results/2026-11-13/ are redacted copies (host paths replaced with `<data-root>/...`, internal process
-notes reworded) of `gate/EVAL-PLAN.md`, `gate/registration.yaml` and `gate/spec.yaml`; the gate-time originals are not
-published.
-
-`trainer.yaml` and `sanity-evidence/` are unchanged; `spec.yaml` still pins the original `registration.yaml` hash.
-The runtime scripts were unchanged by this redaction; `RESULT.md` lists their later re-pins.
+Code comments, tests, `RESULT.md` and the gate files under `results/` cite records of the framework's development:
+the maintainers' decision record ("Area 4 decisions"), the framework's review rounds ("review 9 L1", "review 11 L1")
+and ids of its internal issue lists (`G-21`). Those records are not published.
 
 ## Data and licenses
 
